@@ -1,0 +1,43 @@
+CREATE TABLE IF NOT EXISTS java_studenti (
+	JMBAG INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	korisnicko_ime VARCHAR(20) NOT NULL,
+	lozinka VARCHAR(255) NOT NULL,
+	ime VARCHAR(20) NOT NULL,
+	prezime VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS java_obavijesti (
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	kolegij_id INT NOT NULL,
+	tekst TEXT NOT NULL,
+	vrijeme DATETIME NOT NULL/*,
+	FOREIGN KEY (ime_kolegija) REFERENCES java_kolegiji(ime)*/
+);
+
+CREATE TABLE IF NOT EXISTS java_kolegiji (
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	ime VARCHAR(50) NOT NULL,
+	profesor_id INT NOT NULL,
+	opis TEXT NOT NULL,
+	pravila TEXT NOT NULL/*,
+	FOREIGN KEY (profesor_id) REFERENCES java_profesori(id)*/
+);
+
+CREATE TABLE IF NOT EXISTS java_upisi (
+	kolegij_id INT NOT NULL,
+	JMBAG INT NOT NULL,
+	potvrdjeno BOOLEAN NOT NULL,
+	PRIMARY KEY (kolegij_id, JMBAG)/*,
+	FOREIGN KEY (ime_kolegija) REFERENCES java_kolegiji(ime),
+	FOREIGN KEY (JMBAG) REFERENCES java_studenti(JMBAG)*/
+);
+
+CREATE TABLE IF NOT EXISTS java_profesori (
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	korisnicko_ime VARCHAR(20) NOT NULL,
+	lozinka VARCHAR(255) NOT NULL,
+	ime VARCHAR(20) NOT NULL,
+	prezime VARCHAR(20) NOT NULL
+);
+
+
