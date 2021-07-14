@@ -10,9 +10,14 @@ import DatabaseConnection.KolegijService;
 import DatabaseConnection.Profesor;
 import DatabaseConnection.Upis;
 import DatabaseConnection.UpisService;
+import java.awt.Component;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -32,12 +37,19 @@ public class ProfStartFrame extends javax.swing.JFrame {
     String tekst_odabranog_upisa;
     Upis odabran_upis;
     
+    ComponentListener listener = new ComponentAdapter() {
+      public void componentShown(ComponentEvent evt) {
+        Component c = (Component) evt.getSource();
+        initList();
+        //initUpisi();
+      }};
+    
     /**
      * Creates new form ProfStartFrame
      */
     public ProfStartFrame(Profesor prof) {
         initComponents();
-        
+        this.addComponentListener(listener);
         this.prof = prof;
         
         jLabel1.setText(prof.getIme() + " " + prof.getprezime());
@@ -48,7 +60,6 @@ public class ProfStartFrame extends javax.swing.JFrame {
                 {
                     if(!e.getValueIsAdjusting()) {
                         ime_odabranog_kolegija = jList1.getSelectedValuesList().get(0);
-                        otvoriStranicu(ime_odabranog_kolegija);
                     }
                 }
         });
@@ -78,7 +89,7 @@ public class ProfStartFrame extends javax.swing.JFrame {
                     }
                 }
         });
-        initUpisi();
+        //initUpisi();
     }
     
     // dohvati zahtjeve za upis i napravi listu
@@ -155,6 +166,11 @@ public class ProfStartFrame extends javax.swing.JFrame {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        jList1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jList1MouseClicked(evt);
+            }
         });
         jScrollPane2.setViewportView(jList1);
 
@@ -267,6 +283,16 @@ public class ProfStartFrame extends javax.swing.JFrame {
         String[] upis_podaci = tekst_odabranog_upisa.split(" ");
         // odobri upis
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
+        // TODO add your handling code here:
+        JList list = (JList)evt.getSource();
+        if (evt.getClickCount() == 2) {
+            //int index = list.locationToIndex(evt.getPoint());
+            //System.out.println("index: "+index);
+            otvoriStranicu(ime_odabranog_kolegija);
+        }
+    }//GEN-LAST:event_jList1MouseClicked
 
     /**
      * @param args the command line arguments

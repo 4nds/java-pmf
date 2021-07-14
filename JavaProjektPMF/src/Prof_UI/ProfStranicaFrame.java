@@ -11,6 +11,10 @@ import DatabaseConnection.KolegijService;
 import DatabaseConnection.Profesor;
 import DatabaseConnection.Obavijest;
 import DatabaseConnection.ObavijestService;
+import java.awt.Component;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -23,11 +27,19 @@ import java.util.Date;
  *
  * @author David
  */
+
+
 public class ProfStranicaFrame extends javax.swing.JFrame {
 
     public Profesor prof;
     public Kolegij kolegij;
     ProfStartFrame start_frame;
+    
+    ComponentListener listener = new ComponentAdapter() {
+      public void componentShown(ComponentEvent evt) {
+        Component c = (Component) evt.getSource();
+        postaviObavijesti();
+      }};
     
     /**
      * Creates new form ProfStranicaFrame
@@ -38,15 +50,21 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         this.start_frame = start_frame;
         this.kolegij = kolegij;
         
+        jLabel1.setText(kolegij.getIme());
+        
+        this.addComponentListener(listener);
+        
         dohvatiOpis();
         dohvatiPravila();
-        initObavijesti();
+        postaviObavijesti();
     }
+    
+    
     
     public void dohvatiOpis()
     {
         // dohvati opis iz baze
-        jTextArea1.setText(kolegij.getOpis());
+        jTextArea2.setText(kolegij.getOpis());
     }
     
     public void dohvatiPravila()
@@ -55,9 +73,9 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jTextArea1.setText(kolegij.getPravila());
     }
     
-    public void initObavijesti() {
+    public void postaviObavijesti() {
         try {
-            
+            jTextArea3.setText("");
             ArrayList<Obavijest> obavijesti = ObavijestService.findAllByKolegij(kolegij);
             for (Obavijest obvj: obavijesti)
             {
@@ -293,7 +311,7 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jButton1.setEnabled(false);
         jButton2.setEnabled(true);
         
-        String opis_kolegija = jTextArea1.getText();
+        String opis_kolegija = jTextArea2.getText();
         
         // pozovi funkciju da promijeni opis kolegija u bazi
         try {
@@ -321,7 +339,7 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jButton3.setEnabled(false);
         jButton4.setEnabled(true);
         
-        String pravila_kolegija = jTextArea2.getText();
+        String pravila_kolegija = jTextArea1.getText();
         
         // pozovi funkciju da promijeni pravila kolegija u bazi
         try {

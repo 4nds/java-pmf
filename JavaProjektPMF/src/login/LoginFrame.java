@@ -122,6 +122,7 @@ public class LoginFrame extends javax.swing.JFrame {
         // provjeri podatke
         username = jTextField1.getText();
         password = new String(jPasswordField1.getPassword());
+        
         // ako je student pokazi student UI
         try {
             Student st = StudentService.find(username);
@@ -141,12 +142,14 @@ public class LoginFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e);
         }
         
+        // ako je profesor pokazi profesor UI
         try {
             Profesor pro = ProfesorService.find(username);
             if (pro != null)
             {
-                if (pro.getLozinka() == password)
+                if (pro.getLozinka().equals(password))
                 {
+                    System.out.println("Uspješan login.");
                     this.setVisible(false);
                     new ProfStartFrame(pro).setVisible(true);
                 }
@@ -157,8 +160,8 @@ public class LoginFrame extends javax.swing.JFrame {
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this, e);
-        };
-        // ako je profesor pokazi profesor UI
+        }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -196,6 +199,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new LoginFrame().setVisible(true);
             }
