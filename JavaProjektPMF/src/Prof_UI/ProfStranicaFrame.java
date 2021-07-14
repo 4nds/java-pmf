@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -77,14 +78,15 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         try {
             jTextArea3.setText("");
             ArrayList<Obavijest> obavijesti = ObavijestService.findAllByKolegij(kolegij);
+            Collections.reverse(obavijesti);
             for (Obavijest obvj: obavijesti)
             {
                 Timestamp ts = obvj.getVrijeme();
                 Date date = new Date();
                 date.setTime(ts.getTime());
-                String formattedDate = new SimpleDateFormat("yyyyMMdd").format(date);
+                String formattedDate = new SimpleDateFormat("dd.MM.yyyy.").format(date);
                 String tekst_obavijesti = obvj.getTekst();
-                String nova_obavijest = "-----" + formattedDate + "-----\n" + tekst_obavijesti + "\n\n";
+                String nova_obavijest = "----- " + formattedDate + " -----\n" + tekst_obavijesti + "\n\n";
                 jTextArea3.setText(jTextArea3.getText() + nova_obavijest);
             }
         }

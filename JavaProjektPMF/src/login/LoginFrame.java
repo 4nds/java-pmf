@@ -10,6 +10,7 @@ import DatabaseConnection.StudentService;
 import DatabaseConnection.Profesor;
 import DatabaseConnection.ProfesorService;
 import Prof_UI.ProfStartFrame;
+import Student_UI.StudentStartFrame;
 import javax.swing.JOptionPane;
 /**
  *
@@ -131,7 +132,8 @@ public class LoginFrame extends javax.swing.JFrame {
                 if (st.getLozinka().equals(password))
                 {
                     System.out.println("Uspješan login.");
-                    // pokreni student UI
+                    this.setVisible(false);
+                    new StudentStartFrame(st).setVisible(true);
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "Pogrešna lozinka.");

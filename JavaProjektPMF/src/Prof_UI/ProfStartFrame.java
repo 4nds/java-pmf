@@ -306,15 +306,20 @@ public class ProfStartFrame extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         String[] upis_podaci = tekst_odabranog_upisa.split(" ");
+        //Upis novi_upis = new Upis(upis_podaci[0], upis_podaci[1], true);
         // odobri upis
+        try {
+           // UpisService.update(novi_upis);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e + " odobravanje upisa");
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
         // TODO add your handling code here:
         JList list = (JList)evt.getSource();
         if (evt.getClickCount() == 2) {
-            //int index = list.locationToIndex(evt.getPoint());
-            //System.out.println("index: "+index);
             otvoriStranicu(ime_odabranog_kolegija);
         }
     }//GEN-LAST:event_jList1MouseClicked
