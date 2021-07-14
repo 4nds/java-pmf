@@ -65,4 +65,9 @@ public class Student {
             this.prezime = prezime;
     }
     
+    @Override
+    public String toString() { 
+        return "Student('" + korisnicko_ime + "', '" + lozinka + "', '" + ime +"', '" + prezime + "')";  
+    }
+    
 }

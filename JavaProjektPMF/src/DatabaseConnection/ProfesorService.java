@@ -42,12 +42,56 @@ public class ProfesorService {
                 rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime"));
         }
         
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_profesor.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return found_profesor;
     }
     
     public static Profesor find(String korisnicko_ime) throws SQLException {
         return find(korisnicko_ime, Optional.empty());
     }
+    
+    public static Profesor findById(int id, Optional<Connection> con_opt) throws SQLException {
+        
+        Profesor found_profesor = null;
+            
+        Connection con = con_opt.orElse(DriverManager.getConnection(
+                ConnectionData.getLink(), ConnectionData.getUsername(), ConnectionData.getPassword()));
+
+        String query_find_profesor = "SELECT * FROM slapnicar.java_profesori WHERE java_profesori.id=? LIMIT 1";
+
+        pstmt_profesor = con.prepareStatement(query_find_profesor);
+
+        pstmt_profesor.setInt(1, id);
+
+        ResultSet rs = pstmt_profesor.executeQuery();
+
+        while (rs.next()) {
+            found_profesor = new Profesor(rs.getInt("id"), rs.getString("korisnicko_ime"),
+                rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime"));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_profesor.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
+        return found_profesor;
+    }
+    
+    public static Profesor findById(int id) throws SQLException {
+        return findById(id, Optional.empty());
+    }
+    
     
     public static ArrayList<Profesor> findAllByKolegiji(ArrayList<Kolegij> kolegiji, Optional<Connection> con_opt) throws SQLException {
     
@@ -59,7 +103,7 @@ public class ProfesorService {
         String in_sql = String.join(",", Collections.nCopies(kolegiji.size(), "?"));
 
         String query_find_profesori = String.format(
-            "SELECT * FROM slapnicar.java_kolegiji WHERE java_kolegiji.kolegij_id IN (%s)", in_sql);
+            "SELECT * FROM slapnicar.java_kolegiji WHERE java_kolegiji.id IN (%s)", in_sql);
 
         pstmt_profesor = con.prepareStatement(query_find_profesori);
 
@@ -69,8 +113,15 @@ public class ProfesorService {
         ResultSet rs = pstmt_profesor.executeQuery();
         
         while (rs.next()) {
-            found_profesori.add(new Profesor(rs.getInt("id"), rs.getString("korisnicko_ime"),
-                rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime")));
+            found_profesori.add(findById(rs.getInt("profesor_id"), Optional.of(con)));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_profesor.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_profesori;
@@ -96,6 +147,14 @@ public class ProfesorService {
         while (rs.next()) {
             found_profesori.add(new Profesor(rs.getInt("id"), rs.getString("korisnicko_ime"),
                 rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime")));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_profesor.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_profesori;
@@ -128,7 +187,17 @@ public class ProfesorService {
             while (rs.next()) {
                 id = Integer.parseInt(rs.getString(1));
             }
+            
+            if (! rs.isClosed()) {
+                rs.close();
+            }
         }
+        
+        pstmt_profesor.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return id;
     }
     
@@ -152,6 +221,11 @@ public class ProfesorService {
         pstmt_profesor.setInt(5, profesor.getId());
         
         pstmt_profesor.executeUpdate();
+        
+        pstmt_profesor.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
     }
     
     public static void update(Profesor profesor) throws SQLException {

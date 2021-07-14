@@ -41,11 +41,54 @@ public class StudentService {
                 rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime"));
         }
         
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_student.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return found_student;
     }
     
     public static Student find(String korisnicko_ime) throws SQLException {
         return find(korisnicko_ime, Optional.empty());
+    }
+    
+    public static Student findByJmbag(int jmbag, Optional<Connection> con_opt) throws SQLException {
+        
+        Student found_student = null;
+            
+        Connection con = con_opt.orElse(DriverManager.getConnection(
+                ConnectionData.getLink(), ConnectionData.getUsername(), ConnectionData.getPassword()));
+
+        String query_find_student = "SELECT * FROM slapnicar.java_studenti WHERE java_studenti.jmbag=? LIMIT 1";
+
+        pstmt_student = con.prepareStatement(query_find_student);
+
+        pstmt_student.setInt(1, jmbag);
+
+        ResultSet rs = pstmt_student.executeQuery();
+
+        while (rs.next()) {
+            found_student = new Student(rs.getInt("jmbag"), rs.getString("korisnicko_ime"),
+                rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime"));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_student.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
+        return found_student;
+    }
+    
+    public static Student findByJmbag(int jmbag) throws SQLException {
+        return findByJmbag(jmbag, Optional.empty());
     }
     
     public static ArrayList<Student> findAllByKolegij(Kolegij kolegij, Optional<Connection> con_opt) throws SQLException {
@@ -64,8 +107,15 @@ public class StudentService {
         ResultSet rs = pstmt_student.executeQuery();
         
         while (rs.next()) {
-            found_studenti.add(new Student(rs.getInt("jmbag"), rs.getString("korisnicko_ime"),
-                rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime")));
+            found_studenti.add(findByJmbag(rs.getInt("jmbag"), Optional.of(con)));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_student.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_studenti;
@@ -91,6 +141,14 @@ public class StudentService {
         while (rs.next()) {
             found_studenti.add(new Student(rs.getInt("jmbag"), rs.getString("korisnicko_ime"),
                 rs.getString("lozinka"), rs.getString("ime"), rs.getString("prezime")));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_student.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_studenti;
@@ -122,10 +180,18 @@ public class StudentService {
             while (rs.next()) {
                 jmbag = Integer.parseInt(rs.getString(1));
             }
+            if (! rs.isClosed()) {
+                rs.close();
+            }
         }
+
+        pstmt_student.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return jmbag;
     }
-    
     public static int insert(String korisnicko_ime, String lozinka, String ime, String prezime) throws SQLException {
         return insert(korisnicko_ime, lozinka, ime, prezime, Optional.empty());
     }
@@ -146,6 +212,11 @@ public class StudentService {
         pstmt_student.setInt(5, student.getJmbag());
         
         pstmt_student.executeUpdate();
+        
+        pstmt_student.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
     }
     
     public static void update(Student student) throws SQLException {
