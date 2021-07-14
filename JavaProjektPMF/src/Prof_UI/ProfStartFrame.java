@@ -5,7 +5,11 @@
  */
 package Prof_UI;
 
-import com.mycompany.databaseconnection.*;
+import DatabaseConnection.Kolegij;
+import DatabaseConnection.KolegijService;
+import DatabaseConnection.Profesor;
+import DatabaseConnection.Upis;
+import DatabaseConnection.UpisService;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;

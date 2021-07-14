@@ -5,9 +5,9 @@
  */
 package Prof_UI;
 
-import com.mycompany.databaseconnection.Kolegij;
-import com.mycompany.databaseconnection.Student;
-import com.mycompany.databaseconnection.StudentService;
+import DatabaseConnection.Kolegij;
+import DatabaseConnection.Student;
+import DatabaseConnection.StudentService;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;

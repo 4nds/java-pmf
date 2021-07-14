@@ -5,7 +5,8 @@
  */
 package Prof_UI;
 
-import com.mycompany.databaseconnection.*;
+import DatabaseConnection.Kolegij;
+import DatabaseConnection.ObavijestService;
 import java.sql.Timestamp;
 import javax.swing.JOptionPane;
 

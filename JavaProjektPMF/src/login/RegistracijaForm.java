@@ -5,7 +5,10 @@
  */
 package login;
 
-import com.mycompany.databaseconnection.*;
+import DatabaseConnection.Student;
+import DatabaseConnection.StudentService;
+import DatabaseConnection.Profesor;
+import DatabaseConnection.ProfesorService;
 import javax.swing.JOptionPane;
 
 /**

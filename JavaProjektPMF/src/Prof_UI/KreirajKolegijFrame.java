@@ -5,7 +5,8 @@
  */
 package Prof_UI;
 
-import com.mycompany.databaseconnection.*;
+import DatabaseConnection.Profesor;
+import DatabaseConnection.KolegijService;
 import javax.swing.JOptionPane;
 
 /**

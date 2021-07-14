@@ -5,8 +5,11 @@
  */
 package login;
 
+import DatabaseConnection.Student;
+import DatabaseConnection.StudentService;
+import DatabaseConnection.Profesor;
+import DatabaseConnection.ProfesorService;
 import Prof_UI.ProfStartFrame;
-import com.mycompany.databaseconnection.*;
 import javax.swing.JOptionPane;
 /**
  *
@@ -124,8 +127,9 @@ public class LoginFrame extends javax.swing.JFrame {
             Student st = StudentService.find(username);
             if (st != null)
             {
-                if (st.getLozinka() == password)
+                if (st.getLozinka().equals(password))
                 {
+                    System.out.println("Uspješan login.");
                     // pokreni student UI
                 }
                 else {

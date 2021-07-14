@@ -5,7 +5,13 @@
  */
 package Prof_UI;
 
-import com.mycompany.databaseconnection.*;
+
+import DatabaseConnection.Kolegij;
+import DatabaseConnection.KolegijService;
+import DatabaseConnection.Profesor;
+import DatabaseConnection.Obavijest;
+import DatabaseConnection.ObavijestService;
+
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
