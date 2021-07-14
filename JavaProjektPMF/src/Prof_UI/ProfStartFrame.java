@@ -4,30 +4,125 @@
  * and open the template in the editor.
  */
 package Prof_UI;
+
+import com.mycompany.databaseconnection.*;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 /**
  *
  * @author David
  */
 public class ProfStartFrame extends javax.swing.JFrame {
 
-    public String prof_ID = "prof_ID";
-    public String ime_profesora = "";
-    public String prezime_profesora = "";
+    Profesor prof;
+    String ime_odabranog_kolegija;
+    Kolegij odabran_kolegij;
+    String tekst_odabranog_upisa;
+    Upis odabran_upis;
     
     /**
      * Creates new form ProfStartFrame
      */
-    public ProfStartFrame() {
+    public ProfStartFrame(Profesor prof) {
         initComponents();
         
-        dohvatiImeIPrezime(prof_ID);
+        this.prof = prof;
         
-        jLabel1.setText(ime_profesora + " " + prezime_profesora);
+        jLabel1.setText(prof.getIme() + " " + prof.getprezime());
+        
+        jList1.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e)
+                {
+                    if(!e.getValueIsAdjusting()) {
+                        ime_odabranog_kolegija = jList1.getSelectedValuesList().get(0);
+                        otvoriStranicu(ime_odabranog_kolegija);
+                    }
+                }
+        });
+        initList();
+        
+        jTabbedPane2.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (e.getSource() instanceof JTabbedPane) {
+                    JTabbedPane pane = (JTabbedPane) e.getSource();
+                    int index = pane.getSelectedIndex();
+                    
+                    if (index == 0)
+                        initList();
+                    if (index == 1)
+                        initUpisi();
+                }
+            }
+        });
+        
+        jList2.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e)
+                {
+                    if(!e.getValueIsAdjusting()) {
+                        tekst_odabranog_upisa = jList2.getSelectedValuesList().get(0);
+                    }
+                }
+        });
+        initUpisi();
     }
     
-    public void dohvatiImeIPrezime(String prof_ID)
+    // dohvati zahtjeve za upis i napravi listu
+    private void initUpisi() 
     {
-        // iz baze dohvati ime i prezime profesora s prof_ID
+        DefaultListModel listModel = new DefaultListModel();
+        try {
+            ArrayList<Kolegij> kolegiji = KolegijService.findAllByProfesor(prof);
+            ArrayList<Upis> upisi = UpisService.findAllByKolegiji(kolegiji);
+            for (Upis upis: upisi)
+            {
+                if (upis.getPotvrdjeno() == false)
+                    listModel.addElement(upis.getJmbag() + " " + upis.getKolegijId());
+            }
+            jList2.setModel(listModel);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
+    }
+    
+    private void otvoriStranicu(String ime) {
+        try {
+            odabran_kolegij = KolegijService.find(ime);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
+        
+        this.setVisible(false);
+        new ProfStranicaFrame(prof, this, odabran_kolegij).setVisible(true);
+    }
+    
+    // dohvacamo kolegije i stavljamo ih u listu
+    private void initList()
+    {
+        DefaultListModel listModel = new DefaultListModel();
+        try {
+            ArrayList<Kolegij> kolegiji = KolegijService.findAllByProfesor(prof);
+            for (Kolegij kolegij: kolegiji)
+            {
+                listModel.addElement(kolegij.getIme());
+            }
+            jList1.setModel(listModel);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
     }
 
     /**
@@ -41,35 +136,78 @@ public class ProfStartFrame extends javax.swing.JFrame {
 
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList2 = new javax.swing.JList<>();
+        jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 788, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 406, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane2.addTab("Moji kolegiji", jPanel1);
+
+        jList2.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(jList2);
+
+        jButton2.setText("Odobri");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 788, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jButton2))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 768, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 406, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Upisi", jPanel2);
@@ -82,13 +220,6 @@ public class ProfStartFrame extends javax.swing.JFrame {
         });
 
         jLabel1.setText("Ime profesora");
-
-        jButton2.setText("test za stanicu");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -103,8 +234,6 @@ public class ProfStartFrame extends javax.swing.JFrame {
                         .addGap(24, 24, 24)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)
-                        .addGap(50, 50, 50)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -114,8 +243,7 @@ public class ProfStartFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(jButton2))
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -127,13 +255,13 @@ public class ProfStartFrame extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
-        new KreirajKolegijFrame(prof_ID, this).setVisible(true);
+        new KreirajKolegijFrame(prof, this).setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        this.setVisible(false);
-        new ProfStranicaFrame(prof_ID, this, "kolegij").setVisible(true);
+        String[] upis_podaci = tekst_odabranog_upisa.split(" ");
+        // odobri upis
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -166,7 +294,6 @@ public class ProfStartFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ProfStartFrame().setVisible(true);
             }
         });
     }
@@ -175,8 +302,12 @@ public class ProfStartFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JList<String> jList1;
+    private javax.swing.JList<String> jList2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane2;
     // End of variables declaration//GEN-END:variables
 }

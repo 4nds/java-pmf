@@ -4,20 +4,24 @@
  * and open the template in the editor.
  */
 package Prof_UI;
+
+import com.mycompany.databaseconnection.*;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author David
  */
 public class KreirajKolegijFrame extends javax.swing.JFrame {
 
-    public String prof_ID;
+    public Profesor prof;
     public ProfStartFrame start_frame;
     /**
      * Creates new form KreirajKolegijFrame
      */
-    public KreirajKolegijFrame(String prof_ID, ProfStartFrame start_frame) {
+    public KreirajKolegijFrame(Profesor prof, ProfStartFrame start_frame) {
         initComponents();
-        this.prof_ID = prof_ID;
+        this.prof = prof;
         this.start_frame = start_frame;
     }
     
@@ -147,7 +151,12 @@ public class KreirajKolegijFrame extends javax.swing.JFrame {
         String pravila_kolegija = jTextArea2.getText();
         
         // Dodaj kolegij u bazu
-        // .....
+        try {
+            KolegijService.insert(ime_kolegija, prof, opis_kolegija, pravila_kolegija);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
         
         this.setVisible(false);
         start_frame.setVisible(true);
