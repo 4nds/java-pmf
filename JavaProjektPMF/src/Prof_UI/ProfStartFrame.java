@@ -36,12 +36,16 @@ public class ProfStartFrame extends javax.swing.JFrame {
     Kolegij odabran_kolegij;
     String tekst_odabranog_upisa;
     Upis odabran_upis;
+    ArrayList<Kolegij> kolegiji;
+    ArrayList<Upis> upisi;
     
     ComponentListener listener = new ComponentAdapter() {
       public void componentShown(ComponentEvent evt) {
         Component c = (Component) evt.getSource();
-        initList();
-        //initUpisi();
+        getKolegiji();
+        initKolegiji();
+        getUpisi();
+        initUpisi();
       }};
     
     /**
@@ -59,11 +63,11 @@ public class ProfStartFrame extends javax.swing.JFrame {
             public void valueChanged(ListSelectionEvent e)
                 {
                     if(!e.getValueIsAdjusting()) {
-                        ime_odabranog_kolegija = jList1.getSelectedValuesList().get(0);
+                        if(!jList1.getSelectedValuesList().isEmpty())
+                            ime_odabranog_kolegija = jList1.getSelectedValuesList().get(0);
                     }
                 }
         });
-        initList();
         
         jTabbedPane2.addChangeListener(new ChangeListener() {
             @Override
@@ -72,10 +76,14 @@ public class ProfStartFrame extends javax.swing.JFrame {
                     JTabbedPane pane = (JTabbedPane) e.getSource();
                     int index = pane.getSelectedIndex();
                     
-                    if (index == 0)
-                        initList();
-                    if (index == 1)
+                    if (index == 0) {
+                        System.out.println("Odabran popis kolegija.");
+                        initKolegiji();
+                    }
+                    if (index == 1) {
                         initUpisi();
+                        System.out.println("Odabran popis upisa.");
+                    }
                 }
             }
         });
@@ -85,30 +93,41 @@ public class ProfStartFrame extends javax.swing.JFrame {
             public void valueChanged(ListSelectionEvent e)
                 {
                     if(!e.getValueIsAdjusting()) {
-                        tekst_odabranog_upisa = jList2.getSelectedValuesList().get(0);
+                        if (!jList2.getSelectedValuesList().isEmpty())
+                            tekst_odabranog_upisa = jList2.getSelectedValuesList().get(0);
                     }
                 }
         });
-        //initUpisi();
+        
+        getKolegiji();
+        initKolegiji();
+        getUpisi();
+        initUpisi();
     }
     
     // dohvati zahtjeve za upis i napravi listu
-    private void initUpisi() 
+    
+    private void getUpisi()
     {
-        DefaultListModel listModel = new DefaultListModel();
         try {
-            ArrayList<Kolegij> kolegiji = KolegijService.findAllByProfesor(prof);
-            ArrayList<Upis> upisi = UpisService.findAllByKolegiji(kolegiji);
-            for (Upis upis: upisi)
-            {
-                if (upis.getPotvrdjeno() == false)
-                    listModel.addElement(upis.getJmbag() + " " + upis.getKolegijId());
-            }
-            jList2.setModel(listModel);
+            upisi = UpisService.findAllByKolegiji(kolegiji);
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e);
+            JOptionPane.showMessageDialog(this, e + " initUpis");
         }
+    }
+    
+    private void initUpisi()
+    {
+        DefaultListModel listModel = new DefaultListModel();
+        for (Upis upis: upisi)
+        {
+            if (upis.getPotvrdjeno() == false) {
+                listModel.addElement(upis.getJmbag() + " " + upis.getKolegijId());
+                System.out.println("Dodajem u upis");
+            }
+        }
+        jList2.setModel(listModel);
     }
     
     private void otvoriStranicu(String ime) {
@@ -124,20 +143,26 @@ public class ProfStartFrame extends javax.swing.JFrame {
     }
     
     // dohvacamo kolegije i stavljamo ih u listu
-    private void initList()
+    
+    private void getKolegiji()
     {
-        DefaultListModel listModel = new DefaultListModel();
         try {
-            ArrayList<Kolegij> kolegiji = KolegijService.findAllByProfesor(prof);
-            for (Kolegij kolegij: kolegiji)
-            {
-                listModel.addElement(kolegij.getIme());
-            }
-            jList1.setModel(listModel);
+            kolegiji = KolegijService.findAllByProfesor(prof);
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e);
+            JOptionPane.showMessageDialog(this, e + " getKolegiji");
         }
+    }
+    
+    private void initKolegiji()
+    {
+        DefaultListModel listModel = new DefaultListModel();
+        for (Kolegij kolegij: kolegiji)
+        {
+            listModel.addElement(kolegij.getIme());
+            System.out.println("Dodajem kolegij:" + kolegij.getIme());
+        }
+        jList1.setModel(listModel);
     }
 
     /**
