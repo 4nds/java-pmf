@@ -5,22 +5,27 @@
  */
 package Prof_UI;
 
+import DatabaseConnection.Kolegij;
+import DatabaseConnection.ObavijestService;
+import java.sql.Timestamp;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author David
  */
 public class NovaObavijestFrame extends javax.swing.JFrame {
     
-    String prof_ID;
+    Kolegij kolegij;
     ProfStranicaFrame stranica;
     
 
     /**
      * Creates new form NovaObavijestFrame
      */
-    public NovaObavijestFrame(String prof_ID, ProfStranicaFrame stranica) {
+    public NovaObavijestFrame(Kolegij kolegij, ProfStranicaFrame stranica) {
         initComponents();
-        this.prof_ID = prof_ID;
+        this.kolegij = kolegij;
         this.stranica = stranica;
     }
 
@@ -104,6 +109,13 @@ public class NovaObavijestFrame extends javax.swing.JFrame {
         String text = jTextArea1.getText();
         
         // pozovi funkciju da postalvjanje obavijesti u bazu
+        try {
+            Timestamp time = new Timestamp(System.currentTimeMillis());
+            ObavijestService.insert(kolegij, text, time);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
         
         this.setVisible(false);
         stranica.setVisible(true);
@@ -112,6 +124,7 @@ public class NovaObavijestFrame extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
+        
         stranica.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 

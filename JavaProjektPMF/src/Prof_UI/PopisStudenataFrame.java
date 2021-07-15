@@ -5,29 +5,51 @@
  */
 package Prof_UI;
 
+import DatabaseConnection.Kolegij;
+import DatabaseConnection.Student;
+import DatabaseConnection.StudentService;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author David
  */
 public class PopisStudenataFrame extends javax.swing.JFrame {
 
-    String ime_kolegija = "kolegij";
+    Kolegij kolegij;
     ProfStranicaFrame stranica;
     
     /**
      * Creates new form PopisStudenataFrame
      */
-    public PopisStudenataFrame(String ime_kolegija, ProfStranicaFrame stranica) {
+    public PopisStudenataFrame(Kolegij kolegij, ProfStranicaFrame stranica) {
         initComponents();
-        this.ime_kolegija = ime_kolegija;
+        this.kolegij = kolegij;
         this.stranica = stranica;
         
-        dohvatiStudente(ime_kolegija);
+        jLabel1.setText(kolegij.getIme());
+        
+        dohvatiStudente(kolegij);
     }
     
-    public void dohvatiStudente(String ime_kolegija)
+    public void dohvatiStudente(Kolegij kolegij)
     {
         // dohvati studente iz baze i popuni listu
+        try {
+            ArrayList<Student> studenti = StudentService.findAllByKolegij(kolegij);
+            DefaultListModel listModel = new DefaultListModel();
+            for (Student s: studenti)
+            {
+                String student = s.getIme() + " " + s.getPrezime();
+                listModel.addElement(student);
+            }
+            jList1.setModel(listModel);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
     }
 
     /**

@@ -5,42 +5,94 @@
  */
 package Prof_UI;
 
+
+import DatabaseConnection.Kolegij;
+import DatabaseConnection.KolegijService;
+import DatabaseConnection.Profesor;
+import DatabaseConnection.Obavijest;
+import DatabaseConnection.ObavijestService;
+import java.awt.Component;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+
 /**
  *
  * @author David
  */
+
+
 public class ProfStranicaFrame extends javax.swing.JFrame {
 
-    public String prof_ID;
-    public String ime_kolegija = "ime kolegija";
+    public Profesor prof;
+    public Kolegij kolegij;
     ProfStartFrame start_frame;
+    
+    ComponentListener listener = new ComponentAdapter() {
+      public void componentShown(ComponentEvent evt) {
+        Component c = (Component) evt.getSource();
+        postaviObavijesti();
+      }};
     
     /**
      * Creates new form ProfStranicaFrame
      */
-    public ProfStranicaFrame(String prof_ID, ProfStartFrame start_frame, String ime_kolegija) {
+    public ProfStranicaFrame(Profesor prof, ProfStartFrame start_frame, Kolegij kolegij) {
         initComponents();
-        this.prof_ID = prof_ID;
+        this.prof = prof;
         this.start_frame = start_frame;
-        this.ime_kolegija = ime_kolegija;
-        jLabel1.setText(ime_kolegija);
+        this.kolegij = kolegij;
         
-        dohvatiOpis(ime_kolegija);
-        dohvatiPravila(ime_kolegija);
+        jLabel1.setText(kolegij.getIme());
+        
+        this.addComponentListener(listener);
+        
+        dohvatiOpis();
+        dohvatiPravila();
+        postaviObavijesti();
     }
     
-    public void dohvatiOpis(String ime_kolegija)
+    
+    
+    public void dohvatiOpis()
     {
-        String opis = "";
         // dohvati opis iz baze
-        jTextArea1.setText(opis);
+        jTextArea2.setText(kolegij.getOpis());
     }
     
-    public void dohvatiPravila(String ime_kolegija)
+    public void dohvatiPravila()
     {
-        String pravila = "";
         // dohvati pravila iz baze
-        jTextArea1.setText(pravila);
+        jTextArea1.setText(kolegij.getPravila());
+    }
+    
+    public void postaviObavijesti() {
+        try {
+            jTextArea3.setText("");
+            ArrayList<Obavijest> obavijesti = ObavijestService.findAllByKolegij(kolegij);
+            Collections.reverse(obavijesti);
+            for (Obavijest obvj: obavijesti)
+            {
+                Timestamp ts = obvj.getVrijeme();
+                Date date = new Date();
+                date.setTime(ts.getTime());
+                String formattedDate = new SimpleDateFormat("dd.MM.yyyy.").format(date);
+                String tekst_obavijesti = obvj.getTekst();
+                String nova_obavijest = "----- " + formattedDate + " -----\n" + tekst_obavijesti + "\n\n";
+                jTextArea3.setText(jTextArea3.getText() + nova_obavijest);
+            }
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
     }
 
     /**
@@ -65,10 +117,11 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea3 = new javax.swing.JTextArea();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -125,15 +178,21 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel4.setText("Obavijesti");
 
+        jTextArea3.setEditable(false);
+        jTextArea3.setColumns(20);
+        jTextArea3.setLineWrap(true);
+        jTextArea3.setRows(5);
+        jScrollPane4.setViewportView(jTextArea3);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 289, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 367, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
         );
 
         jButton5.setText("Nova obavijest");
@@ -154,13 +213,6 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton7ActionPerformed(evt);
-            }
-        });
-
-        jButton8.setText("Obriši kolegij");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
             }
         });
 
@@ -198,12 +250,9 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
                                 .addComponent(jButton5))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton8)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jButton6)))))
+                                    .addComponent(jButton6))))
                         .addGap(18, 18, 18))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton7)
@@ -241,9 +290,7 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton6)
-                            .addComponent(jButton8))
+                        .addComponent(jButton6)
                         .addGap(5, 5, 5)))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
@@ -266,9 +313,16 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jButton1.setEnabled(false);
         jButton2.setEnabled(true);
         
-        String opis_kolegija = jTextArea1.getText();
+        String opis_kolegija = jTextArea2.getText();
         
         // pozovi funkciju da promijeni opis kolegija u bazi
+        try {
+            kolegij.setOpis(opis_kolegija);
+            KolegijService.update(kolegij);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -287,15 +341,22 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
         jButton3.setEnabled(false);
         jButton4.setEnabled(true);
         
-        String pravila_kolegija = jTextArea2.getText();
+        String pravila_kolegija = jTextArea1.getText();
         
         // pozovi funkciju da promijeni pravila kolegija u bazi
+        try {
+            kolegij.setPravila(pravila_kolegija);
+            KolegijService.update(kolegij);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
-        new NovaObavijestFrame(prof_ID, this).setVisible(true);
+        new NovaObavijestFrame(kolegij, this).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
@@ -307,17 +368,8 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
-        new PopisStudenataFrame(ime_kolegija, this).setVisible(true);
+        new PopisStudenataFrame(kolegij, this).setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
-        this.setVisible(false);
-        
-        // makni kolegij iz baze
-        
-        start_frame.setVisible(true);
-    }//GEN-LAST:event_jButton8ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -361,7 +413,6 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -369,7 +420,9 @@ public class ProfStranicaFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea jTextArea3;
     // End of variables declaration//GEN-END:variables
 }
