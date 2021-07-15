@@ -42,11 +42,54 @@ public class KolegijService {
                 rs.getInt("profesor_id"), rs.getString("opis"), rs.getString("pravila"));
         }
         
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return found_kolegij;
     }
     
     public static Kolegij find(String ime) throws SQLException {
         return find(ime, Optional.empty());
+    }
+    
+    public static Kolegij findById(int id, Optional<Connection> con_opt) throws SQLException {
+        
+        Kolegij found_kolegij = null;
+            
+        Connection con = con_opt.orElse(DriverManager.getConnection(
+                ConnectionData.getLink(), ConnectionData.getUsername(), ConnectionData.getPassword()));
+
+        String query_find_kolegij = "SELECT * FROM slapnicar.java_kolegiji WHERE java_kolegiji.id=? LIMIT 1";
+
+        pstmt_kolegij = con.prepareStatement(query_find_kolegij);
+
+        pstmt_kolegij.setInt(1, id);
+
+        ResultSet rs = pstmt_kolegij.executeQuery();
+
+        while (rs.next()) {
+            found_kolegij = new Kolegij(rs.getInt("id"), rs.getString("ime"),
+                rs.getInt("profesor_id"), rs.getString("opis"), rs.getString("pravila"));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
+        return found_kolegij;
+    }
+    
+    public static Kolegij findById(int id) throws SQLException {
+        return findById(id, Optional.empty());
     }
     
     public static ArrayList<Kolegij> findAllByStudent(Student student, Optional<Connection> con_opt) throws SQLException {
@@ -65,8 +108,15 @@ public class KolegijService {
         ResultSet rs = pstmt_kolegij.executeQuery();
         
         while (rs.next()) {
-            found_kolegiji.add(new Kolegij(rs.getInt("id"), rs.getString("ime"),
-                rs.getInt("profesor_id"), rs.getString("opis"), rs.getString("pravila")));
+            found_kolegiji.add(findById(rs.getInt("kolegij_id"), Optional.of(con)));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_kolegiji;
@@ -96,6 +146,14 @@ public class KolegijService {
                 rs.getInt("profesor_id"), rs.getString("opis"), rs.getString("pravila")));
         }
         
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return found_kolegiji;
     }
     
@@ -123,8 +181,15 @@ public class KolegijService {
         ResultSet rs = pstmt_kolegij.executeQuery();
         
         while (rs.next()) {
-            found_kolegiji.add(new Kolegij(rs.getInt("id"), rs.getString("ime"),
-                rs.getInt("profesor_id"), rs.getString("opis"), rs.getString("pravila")));
+            found_kolegiji.add(findById(rs.getInt("kolegij_id"), Optional.of(con)));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_kolegiji;
@@ -141,7 +206,7 @@ public class KolegijService {
         Connection con = con_opt.orElse(DriverManager.getConnection(
                 ConnectionData.getLink(), ConnectionData.getUsername(), ConnectionData.getPassword()));
 
-        String query_find_kolegiji = "SELECT * FROM slapnicar.java_kolegij";
+        String query_find_kolegiji = "SELECT * FROM slapnicar.java_kolegiji";
 
         pstmt_kolegij = con.prepareStatement(query_find_kolegiji);
 
@@ -150,6 +215,14 @@ public class KolegijService {
         while (rs.next()) {
             found_kolegiji.add(new Kolegij(rs.getInt("id"), rs.getString("ime"),
                 rs.getInt("profesor_id"), rs.getString("opis"), rs.getString("pravila")));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_kolegiji;
@@ -181,7 +254,17 @@ public class KolegijService {
             while (rs.next()) {
                 id = Integer.parseInt(rs.getString(1));
             }
+            
+            if (! rs.isClosed()) {
+                rs.close();
+            }
         }
+        
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return id;
     }
     
@@ -205,6 +288,11 @@ public class KolegijService {
         pstmt_kolegij.setInt(5, kolegij.getId());
         
         pstmt_kolegij.executeUpdate();
+        
+        pstmt_kolegij.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
     }
     
     public static void update(Kolegij kolegij) throws SQLException {

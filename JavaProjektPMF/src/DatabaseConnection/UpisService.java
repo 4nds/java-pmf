@@ -46,6 +46,14 @@ public class UpisService {
                 rs.getBoolean("potvrdjeno")));
         }
         
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_upis.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return found_upisi;
     }
     
@@ -71,6 +79,14 @@ public class UpisService {
                 rs.getBoolean("potvrdjeno")));
         }
         
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_upis.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return found_upisi;
     }
     
@@ -83,7 +99,7 @@ public class UpisService {
         Connection con = con_opt.orElse(DriverManager.getConnection(
             ConnectionData.getLink(), ConnectionData.getUsername(), ConnectionData.getPassword()));
          
-        String query_upis = "INSERT INTO slapnicar.java_upisi VALUES(DEFAULT, ?, ?, ?)";
+        String query_upis = "INSERT INTO slapnicar.java_upisi VALUES(?, ?, ?)";
         
         pstmt_upis = con.prepareStatement(query_upis, new String[]{"java_profesori.id"});
 
@@ -92,6 +108,11 @@ public class UpisService {
         pstmt_upis.setBoolean(3, potvrdjeno);
         
         pstmt_upis.executeUpdate();
+        
+        pstmt_upis.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
     }
     
     public static void insert(Kolegij kolegij, Student student, boolean potvrdjeno) throws SQLException {
@@ -110,8 +131,15 @@ public class UpisService {
         pstmt_upis.setInt(1, upis.getKolegijId());
         pstmt_upis.setInt(2, upis.getJmbag());
         pstmt_upis.setBoolean(3, upis.getPotvrdjeno());
+        pstmt_upis.setInt(4, upis.getKolegijId());
+        pstmt_upis.setInt(5, upis.getJmbag());
         
         pstmt_upis.executeUpdate();
+        
+        pstmt_upis.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
     }
     
     public static void update(Upis upis) throws SQLException {

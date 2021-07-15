@@ -42,6 +42,14 @@ public class ObavijestService {
                 rs.getString("tekst"), rs.getTimestamp("vrijeme")));
         }
         
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_obavijest.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return found_obavijesti;
     }
     
@@ -65,6 +73,14 @@ public class ObavijestService {
         while (rs.next()) {
             found_obavijesti.add(new Obavijest(rs.getInt("id"), rs.getInt("kolegij_id"),
                 rs.getString("tekst"), rs.getTimestamp("vrijeme")));
+        }
+        
+        if (! rs.isClosed()) {
+            rs.close();
+        }
+        pstmt_obavijest.close();
+        if (! con_opt.isPresent()) {
+            con.close();
         }
         
         return found_obavijesti;
@@ -95,7 +111,17 @@ public class ObavijestService {
             while (rs.next()) {
                 id = Integer.parseInt(rs.getString(1));
             }
+            
+                if (! rs.isClosed()) {
+                rs.close();
+            }
         }
+        
+        pstmt_obavijest.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
+        
         return id;
     }
     
@@ -117,6 +143,11 @@ public class ObavijestService {
         pstmt_obavijest.setInt(4, obavijest.getId());
         
         pstmt_obavijest.executeUpdate();
+        
+        pstmt_obavijest.close();
+        if (! con_opt.isPresent()) {
+            con.close();
+        }
     }
     
     public static void update(Obavijest obavijest) throws SQLException {
