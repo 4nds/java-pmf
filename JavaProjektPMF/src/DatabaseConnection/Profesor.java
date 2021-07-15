@@ -57,7 +57,7 @@ public class Profesor {
             this.ime = ime;
     }
     
-    public String getprezime() {
+    public String getPrezime() {
             return prezime;
     }
 

@@ -8,6 +8,8 @@ package Prof_UI;
 import DatabaseConnection.Kolegij;
 import DatabaseConnection.KolegijService;
 import DatabaseConnection.Profesor;
+import DatabaseConnection.Student;
+import DatabaseConnection.StudentService;
 import DatabaseConnection.Upis;
 import DatabaseConnection.UpisService;
 import java.awt.Component;
@@ -38,6 +40,9 @@ public class ProfStartFrame extends javax.swing.JFrame {
     Upis odabran_upis;
     ArrayList<Kolegij> kolegiji;
     ArrayList<Upis> upisi;
+    ArrayList<Student> upisi_studenti;
+    ArrayList<Kolegij> upisi_kolegiji;
+    ArrayList<String> upisi_tekstovi;
     
     ComponentListener listener = new ComponentAdapter() {
       public void componentShown(ComponentEvent evt) {
@@ -56,7 +61,7 @@ public class ProfStartFrame extends javax.swing.JFrame {
         this.addComponentListener(listener);
         this.prof = prof;
         
-        jLabel1.setText(prof.getIme() + " " + prof.getprezime());
+        jLabel1.setText(prof.getIme() + " " + prof.getPrezime());
         
         jList1.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -111,6 +116,17 @@ public class ProfStartFrame extends javax.swing.JFrame {
     {
         try {
             upisi = UpisService.findAllByKolegiji(kolegiji);
+            
+            upisi_studenti = new ArrayList<>();
+            upisi_kolegiji = new ArrayList<>();
+            upisi_tekstovi = new ArrayList<>();
+            for (int i=0; i<upisi.size(); i++)
+            {
+                upisi_studenti.add(StudentService.findByJmbag(upisi.get(i).getJmbag()));
+                upisi_kolegiji.add(KolegijService.findById(upisi.get(i).getKolegijId()));
+                upisi_tekstovi.add(upisi_studenti.get(i).getIme() + " " + upisi_studenti.get(i).getPrezime() + " - " + upisi_kolegiji.get(i).getIme());
+            }
+            
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this, e + " initUpis");
@@ -120,13 +136,24 @@ public class ProfStartFrame extends javax.swing.JFrame {
     private void initUpisi()
     {
         DefaultListModel listModel = new DefaultListModel();
-        for (Upis upis: upisi)
+        for (int i=0; i<upisi.size(); i++)
         {
-            if (upis.getPotvrdjeno() == false) {
-                listModel.addElement(upis.getJmbag() + " " + upis.getKolegijId());
+            if (upisi.get(i).getPotvrdjeno() == false)
+            {
+                //listModel.addElement(upisi.get(i).getJmbag() + " " + upisi.get(i).getKolegijId());
+                listModel.addElement(upisi_tekstovi.get(i));
                 System.out.println("Dodajem u upis");
             }
         }
+        /*
+        for (Upis upis: upisi)
+        {
+            if (upis.getPotvrdjeno() == false) {
+                listModel.addElement(upis.getJmbag() + " " + upis.getKolegijId());                
+                System.out.println("Dodajem u upis");
+            }
+        }
+        */
         jList2.setModel(listModel);
     }
     
@@ -305,11 +332,18 @@ public class ProfStartFrame extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        String[] upis_podaci = tekst_odabranog_upisa.split(" ");
+        //String[] upis_podaci = tekst_odabranog_upisa.split(" ");
+        int i = upisi_tekstovi.indexOf(tekst_odabranog_upisa);
         //Upis novi_upis = new Upis(upis_podaci[0], upis_podaci[1], true);
         // odobri upis
         try {
-           // UpisService.update(novi_upis);
+            if (i > 0) {
+                upisi.get(i).setPotvrdjeno(true);
+                UpisService.update(upisi.get(i));
+                getUpisi();
+                initUpisi();
+            }
+           
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this, e + " odobravanje upisa");

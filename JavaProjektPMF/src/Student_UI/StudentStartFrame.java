@@ -47,7 +47,7 @@ public class StudentStartFrame extends javax.swing.JFrame {
     
     private void init()
     {
-        jLabel1.setText(student.getIme() + " " + student.getprezime());
+        jLabel1.setText(student.getIme() + " " + student.getPrezime());
         getMojiKolegiji();
         initMojiKolegiji();
         getKolegiji();

@@ -42,7 +42,7 @@ public class PopisStudenataFrame extends javax.swing.JFrame {
             DefaultListModel listModel = new DefaultListModel();
             for (Student s: studenti)
             {
-                String student = s.getIme() + " " + s.getprezime();
+                String student = s.getIme() + " " + s.getPrezime();
                 listModel.addElement(student);
             }
             jList1.setModel(listModel);

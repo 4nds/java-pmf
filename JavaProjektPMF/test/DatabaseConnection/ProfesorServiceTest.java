@@ -78,7 +78,7 @@ public class ProfesorServiceTest {
         assertEquals(exp_korisnicko_ime, result.getKorisnickoIme());
         assertEquals(exp_lozinka, result.getLozinka() );
         assertEquals(exp_ime, result.getIme());
-        assertEquals(exp_prezime, result.getprezime());
+        assertEquals(exp_prezime, result.getPrezime());
     }
 
     /**
@@ -101,7 +101,7 @@ public class ProfesorServiceTest {
         assertEquals(exp_korisnicko_ime, result.getKorisnickoIme());
         assertEquals(exp_lozinka, result.getLozinka() );
         assertEquals(exp_ime, result.getIme());
-        assertEquals(exp_prezime, result.getprezime());
+        assertEquals(exp_prezime, result.getPrezime());
     }
 
     /**
@@ -165,7 +165,7 @@ public class ProfesorServiceTest {
                 assertEquals(exp_korisnicka_imena.get(index), result.get(i).getKorisnickoIme());
                 assertEquals(exp_lozinke.get(index), result.get(i).getLozinka() );
                 assertEquals(exp_imena.get(index), result.get(i).getIme());
-                assertEquals(exp_prezimena.get(index), result.get(i).getprezime());
+                assertEquals(exp_prezimena.get(index), result.get(i).getPrezime());
             }
         }
         assertEquals(exp_korisnicka_imena.size(), found);
@@ -234,7 +234,7 @@ public class ProfesorServiceTest {
                 assertEquals(exp_korisnicka_imena.get(index), result.get(i).getKorisnickoIme());
                 assertEquals(exp_lozinke.get(index), result.get(i).getLozinka() );
                 assertEquals(exp_imena.get(index), result.get(i).getIme());
-                assertEquals(exp_prezimena.get(index), result.get(i).getprezime());
+                assertEquals(exp_prezimena.get(index), result.get(i).getPrezime());
             }
         }
         assertEquals(exp_korisnicka_imena.size(), found);
@@ -279,7 +279,7 @@ public class ProfesorServiceTest {
                 assertEquals(exp_korisnicka_imena.get(index), result.get(i).getKorisnickoIme());
                 assertEquals(exp_lozinke.get(index), result.get(i).getLozinka() );
                 assertEquals(exp_imena.get(index), result.get(i).getIme());
-                assertEquals(exp_prezimena.get(index), result.get(i).getprezime());
+                assertEquals(exp_prezimena.get(index), result.get(i).getPrezime());
             }
         }
         assertEquals(exp_korisnicka_imena.size(), found);
@@ -318,7 +318,7 @@ public class ProfesorServiceTest {
                 assertEquals(exp_korisnicka_imena.get(index), result.get(i).getKorisnickoIme());
                 assertEquals(exp_lozinke.get(index), result.get(i).getLozinka() );
                 assertEquals(exp_imena.get(index), result.get(i).getIme());
-                assertEquals(exp_prezimena.get(index), result.get(i).getprezime());
+                assertEquals(exp_prezimena.get(index), result.get(i).getPrezime());
             }
         }
         assertEquals(exp_korisnicka_imena.size(), found);

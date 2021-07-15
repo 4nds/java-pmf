@@ -217,7 +217,7 @@ public class ProfesorService {
         pstmt_profesor.setString(1, profesor.getKorisnickoIme());
         pstmt_profesor.setString(2, profesor.getLozinka());
         pstmt_profesor.setString(3, profesor.getIme());
-        pstmt_profesor.setString(4, profesor.getprezime());
+        pstmt_profesor.setString(4, profesor.getPrezime());
         pstmt_profesor.setInt(5, profesor.getId());
         
         pstmt_profesor.executeUpdate();

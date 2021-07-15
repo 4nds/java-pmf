@@ -208,7 +208,7 @@ public class StudentService {
         pstmt_student.setString(1, student.getKorisnickoIme());
         pstmt_student.setString(2, student.getLozinka());
         pstmt_student.setString(3, student.getIme());
-        pstmt_student.setString(4, student.getprezime());
+        pstmt_student.setString(4, student.getPrezime());
         pstmt_student.setInt(5, student.getJmbag());
         
         pstmt_student.executeUpdate();

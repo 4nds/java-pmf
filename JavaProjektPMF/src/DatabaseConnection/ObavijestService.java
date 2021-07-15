@@ -29,7 +29,7 @@ public class ObavijestService {
         Connection con = con_opt.orElse(DriverManager.getConnection(
                 ConnectionData.getLink(), ConnectionData.getUsername(), ConnectionData.getPassword()));
 
-        String query_find_obavijesti = "SELECT * FROM slapnicar.java_obavijesti WHERE java_obavijesti.kolegij_id=?";
+        String query_find_obavijesti = "SELECT * FROM slapnicar.java_obavijesti WHERE java_obavijesti.kolegij_id=? ORDER BY java_obavijesti.vrijeme";
 
         pstmt_obavijest = con.prepareStatement(query_find_obavijesti);
         
@@ -64,7 +64,7 @@ public class ObavijestService {
         Connection con = con_opt.orElse(DriverManager.getConnection(
                 ConnectionData.getLink(), ConnectionData.getUsername(), ConnectionData.getPassword()));
 
-        String query_find_obavijesti = "SELECT * FROM slapnicar.java_obavijesti";
+        String query_find_obavijesti = "SELECT * FROM slapnicar.java_obavijesti ORDER BY java_obavijesti.vrijeme";
 
         pstmt_obavijest = con.prepareStatement(query_find_obavijesti);
 
